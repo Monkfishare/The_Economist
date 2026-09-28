@@ -1,0 +1,31 @@
+name: Delete azw3 and mobi files
+
+on:
+  workflow_dispatch:
+
+jobs:
+  delete:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Delete azw3 and mobi files
+        run: |
+          find . -type f \( -iname "*.azw3" -o -iname "*.mobi" \) -delete
+
+      - name: Commit and push changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+
+          if git diff --cached --quiet; then
+            echo "No files to delete."
+          else
+            git commit -m "chore: delete azw3 and mobi files"
+            git push
+          fi
